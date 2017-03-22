@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>Super Chat temps réel !</title>
+        <style>
+            #zone_chat strong {
+                color: white;
+                background-color: black;
+                padding: 2px;
+            }
+        </style>
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    </head>
+ 
+    <body>
+    <div class="container">
+          <div class="jumbotron">
+            <h1 >TOFEL <bold style="color:red">Gramma</bold> Together</h1>
+            <p>The English language is nobody's special property. It is the property of the imagination: it is the property of the language itself. "Derek Walcott" </p>
+         </div>
+    </div>
+    <!-- Page Content -->
+    <div class="container">
+        <!-- Heading Row -->
+        <div class="row">
+            <div class="col-md-8">
+                <div class="jumbotron text-center">
+
+           <div class="progress">
+            <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" id="progress" style="width: 0%;">
+            </div>
+           </div>
+
+                    <!--<img class="img-responsive img-rounded" src="http://placehold.it/900x350" alt=""> // ici la question-->
+                    <div class="container">
+                        <div class="page-header">
+                        <h4 id="question"> </h4>
+                        </div>
+                        <a class="btn btn-primary btn-lg" id="btn1" href="#"></a>
+                        <a class="btn btn-primary btn-lg" id="btn2" href="#"></a>
+                        <a class="btn btn-primary btn-lg" id="btn3" href="#"></a>
+                        <a class="btn btn-primary btn-lg" id="btn4" href="#"></a>
+                    </div>
+             </div>
+            <!-- /.col-md-8 -->
+            </div>
+            <div class="col-md-4">
+                                                
+                              <h2>Score Board</h2>
+                              <p>Et vous c'est quoi votre classement !! </p>
+                              <table class="table" >
+                                <thead>
+                                  <tr>
+                                    <th>Firstname</th>
+                                    <th>Lastname</th>
+                                    <th>Score</th>
+                                  </tr>
+                                </thead>
+                                <tbody id="tableauScore">
+                                  <!--<tr class="success">
+                                    <td>CHamseddine</td>
+                                    <td>BENHAMED</td>
+                                    <td>570</td>
+                                    
+                                  </tr>      
+                                  <tr>
+                                    <td>Wadie</td>
+                                    <td>BENHAMED</td>
+                                    <td>570</td>
+                             
+                                  </tr>
+                                  <tr class="danger">
+                                    <td>Danger</td>
+                                    <td>Moe</td>
+                                    <td>0</td>       
+                                  </tr>-->
+                             
+                                </tbody>
+                              </table>
+                            
+            </div>
+            <!-- /.col-md-4 -->
+        </div>
+        <!-- /.row -->
+
+        <hr>
+
+
+        <div class="jumbotron">
+              <div class="container">
+               <div class="row">
+                     <div class="col-md-8">
+                            <form action="/" method="post" id="formulaire_chat">
+                                <input type="text" name="message" id="message" placeholder="Votre message..." size="50" autofocus />
+                                <input type="submit"  id="envoi_message" class="btn btn-info" value="Envoyer" />
+                            </form>
+
+                            <section id="zone_chat">
+                                
+                            </section>
+                     </div>
+                     <div class="col-md-4" >
+                     <div class="label label-primary" ><span class="glyphicon glyphicon-info-sign"></span> Notification</div>
+                     <table id="zone_notification">
+                         <tr>ici la section des notifications:</tr>
+                     </table>
+
+                     
+                     </div>
+              </div>
+             </div>
+        </div>
+
+
+        <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+        <script src="/socket.io/socket.io.js"></script>
+        <script>
+/************************************************************************************************************************************************/
+            // Connexion à socket.io
+            var socket = io.connect('localhost:8087');
+            var compteur=0;
+            
+            var myindex;
+            var questions;
+
+            // Boutton 1 clicked !
+            $( "#btn1" ).click(function() {
+                var rep = $('#btn1').text();
+
+                //alert( pseudo + rep );
+                //$(this).toggleClass('btn btn-info');
+                if(compteur<10)
+                socket.emit('choice',{index:compteur,reponse:rep,myIndex:myindex});
+                next();
+                //insereMessage(pseudo, rep);
+        
+            });
+             // Boutton 2 clicked !
+            var pseudo;
+            $( "#btn2" ).click(function() {
+                var rep = $('#btn2').text();
+                //$(this).toggleClass('btn btn-info');
+               // alert( pseudo + rep );
+               if(compteur<10)
+                socket.emit('choice',{index:compteur,reponse:rep,myIndex:myindex});
+                next();
+                //insereMessage(pseudo, rep);
+        
+            });
+             // Boutton 3 clicked !
+            var pseudo;
+            $( "#btn3" ).click(function() {
+                var rep = $('#btn3').text();
+                //$(this).toggleClass('btn btn-info');
+                //alert( pseudo + rep );
+                if(compteur<10)
+                  socket.emit('choice',{index:compteur,reponse:rep,myIndex:myindex});
+                next();
+                //insereMessage(pseudo, rep);
+        
+            });
+             // Boutton 4 clicked !
+            var pseudo;
+            $( "#btn4" ).click(function() {
+                var rep = $('#btn4').text();
+                //$(this).toggleClass('btn btn-info');
+                //alert( pseudo + rep );
+                if(compteur<10)
+                socket.emit('choice',{index:compteur,reponse:rep,myIndex:myindex});                //insereMessage(pseudo, rep);
+                next();
+            });
+/************************************************************************************************************************************************/
+            // On demande le pseudo, on l'envoie au serveur et on l'affiche dans le titre
+             name = prompt('Quel est votre name ?');
+             lastname = prompt('Quel est votre lastname ?');
+             socket.emit('nouveau_client', {name:name,lastname:lastname} );
+            //$('#tableauScore').prepend('<tr class=\"success\"><td>'+name+'</td><td>'+lastname+'</td><td>0</td></tr>' );
+             document.title = pseudo + ' - ' + document.title;
+/************************************************************************************************************************************************/
+            // Quand on reçoit un message, on l'insère dans la page
+            socket.on('message', function(data) {
+               $('#zone_chat').empty();
+              var nb=data.length;
+              if(nb>5) nb=5;
+               for(var i=0;i<nb;i++)
+              {
+                  if(data[i].pseudo=="rejoint")
+                     $('#zone_chat').append('<p><em>'+data[i].message+'</em></p>');
+                   else
+                  insereMessage(data[i].pseudo, data[i].message);
+              }
+              
+            })
+/************************************************************************************************************************************************/
+             // Quand on reçoit un choice, on l'insère dans la page
+            socket.on('notif', function(data) {
+                //alert(data.message);
+             $('#zone_notification').empty();
+              var nb=data.length;
+              if(nb>5) nb=5;
+              //alert(nb);
+              for(var i=0;i<nb;i++)
+              {
+               // alert(data[i].name);
+                $('#zone_notification').append('<p><em>' + data[i]+'</em></p> </hr></br>');
+              }
+            })
+/************************************************************************************************************************************************/
+             // Quand on reçoit un choice, on l'insère dans la page
+            socket.on('tableau', function(data) {
+              $('#tableauScore').empty();
+              nb=data.length;
+              if(nb>5) nb=5;
+              //alert(nb);
+              for(var i=0;i<nb;i++)
+              {
+               // alert(data[i].name);
+                $('#tableauScore').append('<tr class=\"success\"><td>'+data[i].name+'</td><td>'+data[i].lastname+'</td><td>'+data[i].score+'</td></tr>' );
+                   //alert(data[i].score);
+              }
+            })
+
+/************************************************************************************************************************************************/
+             // Quand on reçoit une question on l'insère dans la page
+            socket.on('question', function(data) {
+
+                $('#progress').text("0%");
+                $('#progress').css("width","0%");
+
+                questions=data;
+                //alert(questions[compteur].question)
+                $( "#question" ).html('1/ '+questions[compteur].question);
+                //alert(questions[compteur].rep1);
+                //random
+                compteur=0;
+                 $("#btn1").text(questions[compteur].rep1 );
+                 $("#btn2").text(questions[compteur].rep2 );
+                 $("#btn3").text(questions[compteur].rep3 );
+                 $("#btn4").text(questions[compteur].rep4 );
+                 $("#btn1").show();
+                 $("#btn2").show();
+                 $("#btn3").show();
+                 $("#btn4").show();
+
+                //alert(data.question);
+            })
+           
+            socket.on('myIndex', function(data) {
+                myindex=data;
+            })
+
+            function next(){
+
+              
+              if(compteur==9) {
+                $('#progress').text((100)+"%");
+                $('#progress').css("width",(100)+"%");
+                 $( "#question" ).html("Merci attendez la fin de la periode SVP :)");
+                 $("#btn1").hide();
+                 $("#btn2").hide();
+                 $("#btn3").hide();
+                 $("#btn4").hide();
+                 return -1;
+              }
+              compteur++;
+
+              $('#progress').text((compteur*10)+"%");
+              $('#progress').css("width",(compteur*10)+"%");
+
+                $( "#question" ).html((compteur+1)+'/ '+questions[compteur].question);
+                //alert(questions[compteur].rep1);
+                $("#btn1").text(questions[compteur].rep1 );
+                $("#btn2").text(questions[compteur].rep2 );
+                $("#btn3").text(questions[compteur].rep3 );
+                $("#btn4").text(questions[compteur].rep4 );
+                //alert("next");
+            }
+/************************************************************************************************************************************************/
+            // Quand un nouveau client se connecte, on affiche l'information
+            /*socket.on('nouveau_client', function(obj) {
+               alert("nouveau client");
+               $('#zone_chat').append('<p><em>@' + obj.name + ' a rejoint le Chat !</em></p>');
+               //$('#tableauScore').prepend('<tr class=\"success\"><td>'+obj.name+'</td><td>'+obj.lastname+'</td><td>0</td></tr>' );
+
+            })*/
+/************************************************************************************************************************************************/
+            // Lorsqu'on envoie le formulaire, on transmet le message et on l'affiche sur la page
+            $('#formulaire_chat').submit(function () {
+                var message = $('#message').val();
+                socket.emit('message', message); // Transmet le message aux autres
+                //insereMessage(name, message); // Affiche le message aussi sur notre page
+                $('#message').val('').focus(); // Vide la zone de Chat et remet le focus dessus
+                return false; // Permet de bloquer l'envoi "classique" du formulaire
+            });
+/************************************************************************************************************************************************/
+
+            // Ajoute un message dans la page
+            function insereMessage(pseudo, message) {
+                $('#zone_chat').append('<div class="row"> <div class="col-md-5"> <div class= \"alert alert-info\">@'+ pseudo +'</div></div> <div class="col-md-7"> <div class= \"alert alert-success\">' + message + '</div></div></div>');
+            }
+        </script>
+    </body>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+
+</html>
