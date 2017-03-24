@@ -34,6 +34,14 @@ var questions=[];
 				});
 }
 getquestions();
+ function insert(data){
+ 	var query="Insert into tablequestion (question,rep1,rep2,rep3,rep4) VALUES ('"+data.question+"','"+data.rep1+"','"+data.rep2+"','"+data.rep3+"','"+data.rep4+"')";
+ 	console.log(query);
+ 	connection.query(query, function(err, results){
+				console.log("done!");
+				});
+}
+
 /************************************************************************************************************************************************/
 //tableau score va contenir la liste des joueurs sous forme d'un objet json {index:0,score:0,name:obj.name,lastname:obj.lastname}
 var score = []; 
@@ -48,6 +56,9 @@ var chat=[];
 // Chargement de la page index.html
 app.get('/', function (req, res) {
   res.sendfile(__dirname + '/index.html');
+});
+app.get('/insert', function (req, res) {
+  res.sendfile(__dirname + '/insert.html');
 });
 /************************************************************************************************************************************************/
 
@@ -126,6 +137,10 @@ io.sockets.on('connection', function (socket, obj) {
         socket.broadcast.emit('message',chat);
         socket.emit('message',chat);
         chat.reverse();
+    }); 
+    socket.on('insert', function (data) {
+        console.log(data);
+        insert(data);
     }); 
 });
 

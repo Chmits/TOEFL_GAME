@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="insert.css">
+</head>
+<body>
+
+<div class="container">
+
+  <div class="jumbotron">
+  <h2>Ajouter une <span style="color: red;">question!</span></h2>
+  <p>Ici vous pouvez ajouter une question avec ses 4 réponses </br> NB : la 4éme réponse sera considérer comme la réponse correcte!</p>
+  </div>
+
+  <div class="jumbotron">
+
+  <div class="container">
+   <div class="row">
+		    <div class="col" >
+		     				<div class="row form-group">
+						        <div class="input-group">
+						            <span class="input-group-addon info" ><span class="glyphicon glyphicon-remove"></span></span>
+						            <input type="text" class="form-control" placeholder="Question" id="ques">
+						        </div>
+						    </div>
+		    </div>
+	</div>
+  </div>
+
+  <div class="row">
+		    <div class="col-sm-6" >
+		     				<div class="row form-group">
+						        <div class="input-group">
+						            <span class="input-group-addon danger" ><span class="glyphicon glyphicon-remove"></span></span>
+						            <input type="text" class="form-control" placeholder="réponse1" id='rep1'>
+						        </div>
+						    </div>
+		    </div>
+  </div>
+  <div class="row">
+		    <div class="col-sm-6" >
+		    				  <div class="row form-group">
+						        <div class="input-group">
+						            <span class="input-group-addon danger" ><span class="glyphicon glyphicon-remove"></span></span>
+						            <input type="text" class="form-control" placeholder="réponse2" id='rep2'>
+						        </div>
+						     </div>
+		    </div>
+  </div>
+
+   <div class="row">
+		    <div class="col-sm-6" >
+		     				<div class="row form-group">
+						        <div class="input-group">
+						            <span class="input-group-addon danger" ><span class="glyphicon glyphicon-remove"></span></span>
+						            <input type="text" class="form-control" placeholder="réponse3" id='rep3'>
+						        </div>
+						    </div>
+		    </div>
+  </div>
+   <div class="row">
+
+		    <div class="col-sm-6" >
+		    				  <div class="row form-group">
+					        	<div class="input-group">
+					            	<input type="text" class="form-control" placeholder="réponse correcte" id='rep4'>
+					            	<span class="input-group-addon success"><span class="glyphicon glyphicon-ok"></span></span>
+					       		 </div>
+					    		</div>
+		    </div>
+  </div>
+  <div class="row">
+  	                          <a class="btn btn-primary btn-lg" id="btn" href="#">Submit</a>
+
+  </div>
+  <br>
+  <div class="row">
+  <div class="alert alert-success" role="alert" id="ok">Question bien inseré!</div>  	
+  </div>
+
+  <div class="row">
+  <div class="alert alert-danger" role="alert" id="no">vérifier l'input!</div>
+  </div>
+
+
+
+</div>
+ <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+ <script src="/socket.io/socket.io.js"></script>
+<script type="text/javascript">
+             var socket = io.connect('localhost:8087');
+             $('#ok').hide();
+             $('#no').hide();
+
+             $( "#btn" ).click(function() {
+                var rep1 = $('#rep1').val();
+                var rep2 = $('#rep2').val();
+                var rep3 = $('#rep3').val();
+                var rep4 = $('#rep4').val();
+                var question = $('#ques').val();
+               socket.emit('insert', {question:question,rep1:rep1,rep2:rep2,rep3:rep3,rep4:rep4});
+                $('#ok').show();
+                setTimeout(function(){  $('#ok').hide();}, 3000);
+
+            });
+
+
+
+
+</script>
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+
+
+</body>
+
+</html>
