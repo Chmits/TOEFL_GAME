@@ -19,6 +19,7 @@ connection.connect();
 //tableau qui va contenir les objets json // les 10 questions seront sauvegardé ici
 var questions=[];
 
+
 //la fonction qui récupére 10 questions et leurs réponses de la base de données
  function getquestions(){
  	connection.query('SELECT * from tablequestion ORDER BY RAND() LIMIT 10 ', function(err, results){
@@ -28,6 +29,8 @@ var questions=[];
 					 //console.log(json);
 					 questions=json;
 					 console.log(questions);
+					 io.sockets.emit('question',questions);
+
 				});
 }
 getquestions();
@@ -40,6 +43,7 @@ var nbJoueur=0;
 var notifications=[];
 //tableau qui va contenir la liste des messages
 var chat=[];
+
 /************************************************************************************************************************************************/
 // Chargement de la page index.html
 app.get('/', function (req, res) {
@@ -49,106 +53,70 @@ app.get('/', function (req, res) {
 
 io.sockets.on('connection', function (socket, obj) {
     // Dès qu'joueur se connecte on lui fournit tous les infos nécessaires
-			    socket.on('nouveau_client', function(obj){
+	socket.on('nouveau_client', function(obj){
+	socket.name = ent.encode(obj.name);
+	socket.lastname = ent.encode(obj.lastname);
+	console.log(obj.name);
+	console.log(obj.lastname);
+		//on ajoute le nouveau client dans le tableau score
+	score.push({index:nbJoueur,score:0,name:obj.name,lastname:obj.lastname});
+	socket.emit('myIndex', nbJoueur);
+	nbJoueur++;
+	socket.broadcast.emit('nouveau_client',{name:socket.name,lastname:socket.lastname});
+	chat.push({pseudo:"rejoint",message:"@"+socket.name+" a rejoint le chat"});
+	chat.reverse();
+	socket.broadcast.emit('message',chat);
+	socket.emit('message',chat);
+	chat.reverse();
+	socket.emit('question', questions);
+	//console.log(questions);
+	//console.log(score);
+	socket.emit('tableau',score);
+	socket.broadcast.emit('tableau',score);
+	socket.emit('notif',notifications);
+	console.log("connection with success!");
+	});
+	socket.on('disconnect', function(){
+	socket.broadcast.emit('message', {pseudo: socket.name, message:  "disconnect !"});
+	});
 
-			        socket.name = ent.encode(obj.name);
-			        socket.lastname = ent.encode(obj.lastname);
-			        console.log(obj.name);
-			        console.log(obj.lastname);
+	socket.on('choice', function (reponse) {
+		console.log(questions[reponse.index].rep4);
+		console.log(reponse.reponse);
+		if(reponse.reponse == questions[reponse.index].rep4)
+			{
+				console.log("bravo");
+				notif ="@"+socket.name+": Bravo! :D";
+				for(var i=0;i<score.length;i++)
+				{
+					if(score[i].index==reponse.myIndex)
+					{
+						score[i].score+=50;
+						break;
+					}
+				}
+				score.sort(function compare(a, b) {return a.score<b.score});
+				socket.emit('tableau',score);
+				socket.broadcast.emit('tableau',score);
+			}
+		else
+			notif ="@"+socket.name+": sorry wrong answer :(";
 
-			        //on ajoute le nouveau client dans le tableau score
-			        score.push({index:nbJoueur,score:0,name:obj.name,lastname:obj.lastname});
-			        socket.emit('myIndex', nbJoueur);
-
-			        nbJoueur++;
-
-			        socket.broadcast.emit('nouveau_client',{name:socket.name,lastname:socket.lastname});
-
-			        chat.push({pseudo:"rejoint",message:"@"+socket.name+" a rejoint le chat"});
-			        chat.reverse();
-			        socket.broadcast.emit('message',chat);
-			        socket.emit('message',chat);
-			        chat.reverse();
-
-			        socket.emit('question', questions);
-
-			        //console.log(questions);
-			        //console.log(score);
-
-			        socket.emit('tableau',score);
-			        socket.broadcast.emit('tableau',score);
-
-			        socket.emit('notif',notifications);
-
-			       
-      			    console.log("connection with success!");
-			    });
-
-			    socket.on('disconnect', function(){
-			    	socket.broadcast.emit('message', {pseudo: socket.name, message:  "disconnect !"});
-			  	});
-
-
-					/******************************************************************/
-
-		  var interval = setInterval(function(str1, str2) {
-		  console.log(str1 + " " + str2);
-							 /*for(var i=0;i<score.length;i++)
-							        	{
-							        			score[i].score=0;
-							        			
-							        	}
-		        			score.sort(function compare(a, b) {return a.score<b.score});
-		        			socket.emit('tableau',score);
-		       	   		    socket.broadcast.emit('tableau',score);
-		        			getquestions();
-		        			socket.emit('question',questions);
-		       	   		    socket.broadcast.emit('question',questions);*/
-		        			
-		}, 2000, "Hello.", "How are you?");
-
-
-					/******************************************************************/
-      socket.on('choice', function (reponse) {
-	        console.log(questions[reponse.index].rep4);
-	        console.log(reponse.reponse);
-	        if(reponse.reponse == questions[reponse.index].rep4)
-			        {
-			        	console.log("bravo");
-			        	notif ="@"+socket.name+": Bravo! :D";
-			        	for(var i=0;i<score.length;i++)
-			        	{
-			        		if(score[i].index==reponse.myIndex)
-			        		{
-			        			score[i].score+=50;
-			        			break;
-			        		}
-			        	}
-			        	score.sort(function compare(a, b) {return a.score<b.score});
-			            socket.emit('tableau',score);
-			       	    socket.broadcast.emit('tableau',score);
-
-			        }
-	        else
-	        		notif ="@"+socket.name+": sorry wrong answer :(";
-
-	        notifications.push(notif);
-	        //console.log(notifications);
-	        notifications.reverse();
-
-	        //console.log("after reverse\n");
-	        //console.log(notifications);
-
-	        socket.emit('notif',notifications);
-	        socket.broadcast.emit('notif',notifications);
-	        notifications.reverse();
+		notifications.push(notif);
+		//console.log(notifications);
+		notifications.reverse();
+		//console.log("after reverse\n");
+		//console.log(notifications);
+		socket.emit('notif',notifications);
+		socket.broadcast.emit('notif',notifications);
+		notifications.reverse();
     }); 
-					/******************************************************************/
+	/******************************************************************/
     socket.on('choice', function (rep) {
         reponse = rep;
         console.log(reponse);
     }); 
-					/******************************************************************/
+	/******************************************************************/
     socket.on('message', function (message) {
         msg = ent.encode(message);
         console.log(message);
@@ -160,4 +128,20 @@ io.sockets.on('connection', function (socket, obj) {
         chat.reverse();
     }); 
 });
+
+/******************************************************************/
+	var interval = setInterval(function(str1, str2) {
+		console.log(str1 + " " + str2);
+		for(var i=0;i<score.length;i++)
+			{
+				score[i].score=0;	
+			}
+		score.sort(function compare(a, b) {return a.score<b.score});
+		io.sockets.emit('tableau',score);
+		getquestions();		  
+		io.sockets.emit('nvSession');      			
+		}, 1000 * 60 , "Hello.", "How are you?");
+
+ /******************************************************************/
+
 server.listen(8087);

@@ -118,7 +118,7 @@
         <script>
 /************************************************************************************************************************************************/
             // Connexion à socket.io
-            var socket = io.connect('localhost:8087');
+            var socket = io.connect('192.168.43.82:8087');
             var compteur=0;
             
             var myindex;
@@ -182,9 +182,11 @@
             socket.on('message', function(data) {
                $('#zone_chat').empty();
               var nb=data.length;
+              //alert(nb);
               if(nb>5) nb=5;
                for(var i=0;i<nb;i++)
               {
+                  //alert(data[i].pseudo);
                   if(data[i].pseudo=="rejoint")
                      $('#zone_chat').append('<p><em>'+data[i].message+'</em></p>');
                    else
@@ -234,20 +236,49 @@
                 //alert(questions[compteur].rep1);
                 //random
                 compteur=0;
-                 $("#btn1").text(questions[compteur].rep1 );
-                 $("#btn2").text(questions[compteur].rep2 );
-                 $("#btn3").text(questions[compteur].rep3 );
-                 $("#btn4").text(questions[compteur].rep4 );
-                 $("#btn1").show();
-                 $("#btn2").show();
-                 $("#btn3").show();
-                 $("#btn4").show();
+                var rand = function randInt(low,high){
+                  return Math.floor(Math.random()*(high-low)+low)
+                };
+               
+                var x1=rand(1,5),x2,x3,x4;
+
+                do{
+                  x2=rand(1,5)
+                  }while(x2 == x1);
+
+                do{
+                  x3=rand(1,5)
+                }while(x3 == x1 || x3 == x2);
+
+                do{
+                  x4=rand(1,5)
+
+                }while(x4 == x1 || x4 == x2 || x4 == x3);
+
+                var index1="#btn"+x1;
+                var index2="#btn"+x2;
+                var index3="#btn"+x3;
+                var index4="#btn"+x4;
+                //alert(x1+"/"+ x2+"/"+x3+"/"+ x4 );
+
+
+                 $(index1).text(questions[compteur].rep1 );
+                 $(index2).text(questions[compteur].rep2 );
+                 $(index3).text(questions[compteur].rep3 );
+                 $(index4).text(questions[compteur].rep4 );
+                 $(index1).show();
+                 $(index2).show();
+                 $(index3).show();
+                 $(index4).show();
 
                 //alert(data.question);
             })
            
             socket.on('myIndex', function(data) {
                 myindex=data;
+            })
+             socket.on('nvSession', function(data) {
+                alert("New Session! GO ?");
             })
 
             function next(){
@@ -261,6 +292,7 @@
                  $("#btn2").hide();
                  $("#btn3").hide();
                  $("#btn4").hide();
+                 //socket.emit('end');
                  return -1;
               }
               compteur++;
@@ -270,20 +302,41 @@
 
                 $( "#question" ).html((compteur+1)+'/ '+questions[compteur].question);
                 //alert(questions[compteur].rep1);
-                $("#btn1").text(questions[compteur].rep1 );
-                $("#btn2").text(questions[compteur].rep2 );
-                $("#btn3").text(questions[compteur].rep3 );
-                $("#btn4").text(questions[compteur].rep4 );
+
+
+                var rand = function randInt(low,high){
+                  return Math.floor(Math.random()*(high-low)+low)
+                };
+               
+                var x1=rand(1,5),x2,x3,x4;
+
+                do{
+                  x2=rand(1,5)
+
+                }while(x2 == x1);
+                do{
+                  x3=rand(1,5)
+
+                }while(x3 == x1 || x3 == x2);
+                do{
+                  x4=rand(1,5)
+
+                }while(x4 == x1 || x4 == x2 || x4 == x3);
+
+                var index1="#btn"+x1;
+                var index2="#btn"+x2;
+                var index3="#btn"+x3;
+                var index4="#btn"+x4;
+                 //alert(x1+"/"+ x2+"/"+x3+"/"+ x4 );
+
+
+                 $(index1).text(questions[compteur].rep1 );
+                 $(index2).text(questions[compteur].rep2 );
+                 $(index3).text(questions[compteur].rep3 );
+                 $(index4).text(questions[compteur].rep4 );
                 //alert("next");
             }
-/************************************************************************************************************************************************/
-            // Quand un nouveau client se connecte, on affiche l'information
-            /*socket.on('nouveau_client', function(obj) {
-               alert("nouveau client");
-               $('#zone_chat').append('<p><em>@' + obj.name + ' a rejoint le Chat !</em></p>');
-               //$('#tableauScore').prepend('<tr class=\"success\"><td>'+obj.name+'</td><td>'+obj.lastname+'</td><td>0</td></tr>' );
 
-            })*/
 /************************************************************************************************************************************************/
             // Lorsqu'on envoie le formulaire, on transmet le message et on l'affiche sur la page
             $('#formulaire_chat').submit(function () {
