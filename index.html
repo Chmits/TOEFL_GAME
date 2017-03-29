@@ -46,7 +46,7 @@
             <!-- /.col-md-8 -->
             </div>
             <div class="col-md-4">
-            	               <a class="btn btn-primary btn-lg" id="btn4" href="http://localhost:8087/insert"> Inserer une question!</a>                  
+            	               <a class="btn btn-primary btn-lg" id="btn4" href="/insert"> Inserer une question!</a>                  
                               <h2>Score Board</h2>
                               <p>Et vous c'est quoi votre classement !! </p>
                               <table class="table" >
@@ -118,7 +118,7 @@
         <script>
 /************************************************************************************************************************************************/
             // Connexion à socket.io
-            var socket = io.connect('localhost:8087');
+            var socket = io.connect('192.168.43.95:8087');
             var compteur=0;
             
             var myindex;
@@ -176,7 +176,7 @@
              lastname = prompt('Quel est votre lastname ?');
              socket.emit('nouveau_client', {name:name,lastname:lastname} );
             //$('#tableauScore').prepend('<tr class=\"success\"><td>'+name+'</td><td>'+lastname+'</td><td>0</td></tr>' );
-             document.title = pseudo + ' - ' + document.title;
+             document.title = name + ' - ' + document.title;
 /************************************************************************************************************************************************/
             // Quand on reçoit un message, on l'insère dans la page
             socket.on('message', function(data) {
