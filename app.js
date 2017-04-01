@@ -155,7 +155,7 @@ io.sockets.on('connection', function (socket, obj) {
 		io.sockets.emit('tableau',score);
 		getquestions();		  
 		io.sockets.emit('nvSession');      			
-		}, 1000 * 60 , "Hello.", "How are you?");
+		}, 2000 * 60 , "Hello.", "How are you?");
 
  /******************************************************************/
 

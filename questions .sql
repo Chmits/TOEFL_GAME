@@ -3,7 +3,11 @@
 -- https://www.phpmyadmin.net/
 --
 -- Client :  127.0.0.1
+<<<<<<< HEAD:questions .sql
 -- Généré le :  Sam 01 Avril 2017 à 19:50
+=======
+-- Généré le :  Sam 25 Mars 2017 à 08:37
+>>>>>>> f94d22cdb38694282be2295507c182461f7886a3:questions.sql
 -- Version du serveur :  5.7.14
 -- Version de PHP :  5.6.25
 

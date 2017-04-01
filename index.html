@@ -118,18 +118,14 @@
         <script>
 /************************************************************************************************************************************************/
             // Connexion à socket.io
-            //var socket = io.connect('localhost:8087');
-             var socket = io.connect('192.168.43.82:8087');
-
+            var socket = io.connect('192.168.43.95:8087');
             var compteur=0;
             
             var myindex;
             var questions;
-
             // Boutton 1 clicked !
             $( "#btn1" ).click(function() {
                 var rep = $('#btn1').text();
-
                 //alert( pseudo + rep );
                 //$(this).toggleClass('btn btn-info');
                 if(compteur<10)
@@ -178,7 +174,7 @@
              lastname = prompt('Quel est votre lastname ?');
              socket.emit('nouveau_client', {name:name,lastname:lastname} );
             //$('#tableauScore').prepend('<tr class=\"success\"><td>'+name+'</td><td>'+lastname+'</td><td>0</td></tr>' );
-             document.title = pseudo + ' - ' + document.title;
+             document.title = name + ' - ' + document.title;
 /************************************************************************************************************************************************/
             // Quand on reçoit un message, on l'insère dans la page
             socket.on('message', function(data) {
@@ -224,14 +220,11 @@
                    //alert(data[i].score);
               }
             })
-
 /************************************************************************************************************************************************/
              // Quand on reçoit une question on l'insère dans la page
             socket.on('question', function(data) {
-
                 $('#progress').text("0%");
                 $('#progress').css("width","0%");
-
                 questions=data;
                 //alert(questions[compteur].question)
                 $( "#question" ).html('1/ '+questions[compteur].question);
@@ -243,27 +236,20 @@
                 };
                
                 var x1=rand(1,5),x2,x3,x4;
-
                 do{
                   x2=rand(1,5)
                   }while(x2 == x1);
-
                 do{
                   x3=rand(1,5)
                 }while(x3 == x1 || x3 == x2);
-
                 do{
                   x4=rand(1,5)
-
                 }while(x4 == x1 || x4 == x2 || x4 == x3);
-
                 var index1="#btn"+x1;
                 var index2="#btn"+x2;
                 var index3="#btn"+x3;
                 var index4="#btn"+x4;
                 //alert(x1+"/"+ x2+"/"+x3+"/"+ x4 );
-
-
                  $(index1).text(questions[compteur].rep1 );
                  $(index2).text(questions[compteur].rep2 );
                  $(index3).text(questions[compteur].rep3 );
@@ -272,7 +258,6 @@
                  $(index2).show();
                  $(index3).show();
                  $(index4).show();
-
                 //alert(data.question);
             })
            
@@ -282,9 +267,7 @@
              socket.on('nvSession', function(data) {
                 alert("New Session! GO ?");
             })
-
             function next(){
-
               
               if(compteur==9) {
                 $('#progress').text((100)+"%");
@@ -298,47 +281,35 @@
                  return -1;
               }
               compteur++;
-
               $('#progress').text((compteur*10)+"%");
               $('#progress').css("width",(compteur*10)+"%");
-
                 $( "#question" ).html((compteur+1)+'/ '+questions[compteur].question);
                 //alert(questions[compteur].rep1);
-
-
                 var rand = function randInt(low,high){
                   return Math.floor(Math.random()*(high-low)+low)
                 };
                
                 var x1=rand(1,5),x2,x3,x4;
-
                 do{
                   x2=rand(1,5)
-
                 }while(x2 == x1);
                 do{
                   x3=rand(1,5)
-
                 }while(x3 == x1 || x3 == x2);
                 do{
                   x4=rand(1,5)
-
                 }while(x4 == x1 || x4 == x2 || x4 == x3);
-
                 var index1="#btn"+x1;
                 var index2="#btn"+x2;
                 var index3="#btn"+x3;
                 var index4="#btn"+x4;
                  //alert(x1+"/"+ x2+"/"+x3+"/"+ x4 );
-
-
                  $(index1).text(questions[compteur].rep1 );
                  $(index2).text(questions[compteur].rep2 );
                  $(index3).text(questions[compteur].rep3 );
                  $(index4).text(questions[compteur].rep4 );
                 //alert("next");
             }
-
 /************************************************************************************************************************************************/
             // Lorsqu'on envoie le formulaire, on transmet le message et on l'affiche sur la page
             $('#formulaire_chat').submit(function () {
@@ -349,7 +320,6 @@
                 return false; // Permet de bloquer l'envoi "classique" du formulaire
             });
 /************************************************************************************************************************************************/
-
             // Ajoute un message dans la page
             function insereMessage(pseudo, message) {
                 $('#zone_chat').append('<div class="row"> <div class="col-md-5"> <div class= \"alert alert-info\">@'+ pseudo +'</div></div> <div class="col-md-7"> <div class= \"alert alert-success\">' + message + '</div></div></div>');
